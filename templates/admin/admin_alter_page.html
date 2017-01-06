@@ -1,0 +1,245 @@
+
+
+
+{% set words = {
+      'category': ' Категории',
+      'service': ' Услуги',
+      'static': ' Страницы',
+      'paper': ' Статьи',
+} %}
+
+{% if action == 'create' %}
+    {% set title = 'Добавление новой' + words[purpose] %}
+    {% set green_button_name = 'Создать' %}
+    {% set ng_click = 'createObject()' %}
+{% else  %}
+    {% set title = 'Редактирование' + words[purpose] %}   {# + ' ' + (object_id|string) #}
+    {% set green_button_name = 'Обновить' %}
+    {% set ng_click = 'updateObject()' %}
+{% endif %}
+
+{% set red_button_name = 'Удалить' %}
+{% set ng_click_remove = 'deleteObject()' %}
+{% set active_page = purpose %}
+
+
+
+{% extends "admin/admin_root.html" %}
+
+
+{% block content %}
+
+<div ng-controller="{{ purpose + 'Controller' }}"
+     class="container"
+     style="max-width: 900px; margin-bottom: 200px;">
+
+<div class="starter-template">
+  <h1>{{ title }}</h1>
+  <h2 ng-if="object.url" style="margin-top: 0;">(<a target="_blank" href="{{ '{{ object.url }}' }}">{{ '{{ object.url }}' }}</a>)</h2>
+</div>
+
+<form novalidate name="pageForm">
+
+  <div class="form-group has-feedback"
+       ng-class="{ 'has-error': !object.heading && pageForm.headingInput.$dirty }">
+    <label class="control-label" for="page-heading-input">Название</label>
+    <input type="text"
+           name="headingInput"
+           ng-model="object.heading"
+           {% if action == 'create' or purpose in ['service', 'paper'] %} ng-change="generateLabel(object)" {% endif %}
+           class="form-control input-lg"
+           id="page-heading-input"
+           placeholder=""
+           aria-describedby="page-heading-help-block"
+           required>
+    <span id="page-heading-help-block" class="help-block">
+    </span>
+  </div>
+
+  <div class="form-group has-feedback"
+       ng-class="{ 'has-error': !labelIsValid && (pageForm.labelInput.$dirty || pageForm.headingInput.$dirty) }">
+    <label class="control-label" for="page-label-input">Ярлык</label>
+    <input type="text"
+           name="labelInput"
+           ng-model="object.label"
+           ng-keyup="labelAutoGeneration = false;"
+           class="form-control input-lg"
+           id="page-label-input"
+           placeholder=""
+           aria-describedby="page-label-help-block"
+           required>
+    <span id="page-label-help-block" class="help-block">
+      Ярлык должен быть уникальным, так как он формирует URL.
+    </span>
+  </div>
+
+  {% if purpose in ['category', 'service', 'paper'] %}
+  <div class="form-group">
+    {% set _name = 'Родительская категория' if purpose == 'category' else 'Категория' %}
+    <label class="control-label" for="page-category-select">{{ _name }}</label>
+    <select class="form-control"
+            ng-model="object.parent_id"
+            ng-options="category.id as category.name for category in categories"
+            id="page-category-select">
+      {% if purpose in ['category'] %}
+      <option value="">-- Нет --</option>
+      {% endif %}
+    </select>
+  </div>
+  {% endif %}
+
+  <div class="form-group has-feedback"
+       ng-class="{ 'has-error': !titleValid() }">
+    <label class="control-label" for="page-title-input">Title</label>
+    <input type="text"
+           ng-model="object.title"
+           class="form-control"
+           id="page-title-input"
+           placeholder="<по умолчанию>"
+           aria-describedby="page-title-help-block"
+           required>
+    {# <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span> #}
+    {# <span id="page-title-help-block" class="sr-only">(success)</span> #}
+    <span id="page-title-help-block" class="help-block">
+      Символов: <span style="font-weight: bold;">{{ '{{ letters_in_title }}' }}</span>
+      / {{ '{{ max_letters_in_title }}' }}
+    </span>
+  </div>
+
+  <div class="form-group"
+       ng-class="{ 'has-error': !descriptionValid() }">
+    <label class="control-label" for="page-description-input">Description</label>
+    <textarea class="form-control"
+              style="resize: none;"
+              rows="2"
+              ng-model="object.description"
+              id="page-description-input"
+              placeholder="<по умолчанию>"
+              aria-describedby="page-description-help-block">
+    </textarea>
+    <span id="page-description-help-block" class="help-block">
+      Символов: <span style="font-weight: bold;">{{ '{{ letters_in_description }}' }}</span>
+      / {{ '{{ max_letters_in_description }}' }}
+    </span>
+  </div>
+
+  {% if purpose in ['service', 'paper'] %}
+
+  <div class="form-group">
+    <label class="control-label" for="tags-choice">Теги</label>
+    <tags-input ng-model="object.tags"
+                id="tags-choice"
+                class="custom-tags"
+                placeholder="Добавить тег..."
+                replace-spaces-with-dashes="false"
+                add-on-comma="false">
+      <auto-complete source="loadTags($query)"></auto-complete>
+    </tags-input>
+  </div>
+
+  {% endif %}
+
+
+  <div class="form-group">
+    <label class="control-label" for="page-content">Содержимое</label>
+    <summernote id="page-content"
+                ng-model="object.content"
+                config="summertimeOptions"></summernote>
+  </div>
+
+
+  {% if purpose in ['service', 'category'] %}
+
+  <div class="form-group">
+    <div class="checkbox">
+      <label>
+        <input type="checkbox"
+               ng-model="object.visible_in_menu"> Отображать в меню
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="page-priority-input">Место в меню</label>
+    <input type="number"
+           ng-model="object.priority"
+           class="form-control"
+           id="page-priority-input"
+           placeholder="<по умолчанию>"
+           aria-describedby="page-priority-help-block"
+           required>
+    <span id="page-priority-help-block" class="help-block">
+      Определяет приоритет расположения в меню
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="page-aux-field-1-input">Дополнительное поле 1</label>
+    <input type="text"
+           ng-model="object.aux_field_1"
+           class="form-control"
+           id="page-aux-field-1-input"
+           placeholder="<по умолчанию>"
+           aria-describedby="page-aux-field-1-help-block"
+           required>
+    <span id="page-aux-field-1-help-block" class="help-block">
+      Расположение: форма заявки наверху.
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="page-aux-field-2-input">Дополнительное поле 2</label>
+    <input type="text"
+           ng-model="object.aux_field_2"
+           class="form-control"
+           id="page-aux-field-2-input"
+           placeholder="<по умолчанию>"
+           aria-describedby="page-aux-field-2-help-block"
+           required>
+    <span id="page-aux-field-2-help-block" class="help-block">
+      Расположение: шапка навигационного меню.
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="page-aux-field-3-input">Дополнительное поле 3</label>
+    <input type="text"
+           ng-model="object.aux_field_3"
+           class="form-control"
+           id="page-aux-field-3-input"
+           placeholder="<по умолчанию>"
+           aria-describedby="page-aux-field-3-help-block"
+           required>
+    <span id="page-aux-field-3-help-block" class="help-block">
+      Расположение: над списком услуг в навигационном меню.
+    </span>
+  </div>
+
+  {% endif %}
+
+
+
+  <div class="form-group">
+    <button type="button"
+            ng-click="{{ ng_click }}"
+            value=""
+            class="btn btn-lg btn-success">{{ green_button_name }}</button>
+
+    {% if action in ['modify', 'update'] and purpose != 'category' %}
+    <button type="button"
+            ng-click="{{ ng_click_remove }}"
+            value=""
+            class="btn btn-lg btn-danger">{{ red_button_name }}</button>
+    {% endif %}
+  </div>
+
+</form>
+{# <pre>labelIsValid = {{ '{{labelIsValid | json}}' }}</pre> #}
+{# <pre>object = {{ '{{object | json}}' }}</pre> #}
+
+</div>
+
+{% endblock %}
+
+
+

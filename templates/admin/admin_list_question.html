@@ -1,0 +1,56 @@
+{% set active_page = 'question' %}
+{% set title = 'Вопросы' %}
+
+{% extends "admin/admin_root.html" %}
+
+{% block content %}
+
+<div class="container" style="max-width: 100%; margin-bottom: 200px;">
+
+<div class="starter-template">
+  <h1>Вопросы (<a href="{{ url_for('admin_question_add') }}">добавить</a>)</h1>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Вопрос</th>
+      <th>Ответ</th>
+      <th>Ссылка</th>
+      <th>Категория</th>
+      {# <th>Дата создания</th> #}
+      <th>Дата изменения</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for question in questions %}
+    <tr>
+      <td>{{ question.id }}</td>
+      <td><a href="{{ url_for('admin_question_edit', id=question.id) }}">{{ question.heading }}</a></td>
+
+      <td>
+        {% if question.is_answer_provided() %}
+          <span style="color: green;"
+                class="glyphicon glyphicon-ok"
+                aria-hidden=true></span>
+          <span class=glyphicon-class></span>
+        {% else %}
+          <span style="color: red" class="glyphicon glyphicon-remove" aria-hidden=true></span>
+          <span class=glyphicon-class></span>
+        {% endif %}
+      </td>
+      <td><a href="{{ question.get_url() }}" target="_blank">{{ question.get_url() }}</a></td>
+      <td>{{ question.page.as_category().nested_name }}</td>
+      {# <td>{{ question.date_created.format('DD.MM.YYYY HH:mm', locale='ru_ru') }}</td> #}
+      <td>{{ question.date_modified.format('DD.MM.YYYY HH:mm', locale='ru_ru') }}</td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+
+</div>
+
+{% endblock %}

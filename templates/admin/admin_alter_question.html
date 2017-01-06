@@ -1,0 +1,135 @@
+{% if action == 'create' %}
+    {% set green_button_name = 'Создать' %}
+    {% set title = 'Добавление нового Вопроса' %}
+    {% set ng_click = 'createObject()' %}
+{% else %}
+    {% set green_button_name = 'Обновить' %}
+    {% set title = 'Редактирование Вопроса '  %} {# + (object_id | string) #}
+    {% set ng_click = 'updateObject()' %}
+{% endif %}
+
+{% set active_page = 'question' %}
+{% set red_button_name = 'Удалить' %}
+{% set ng_click_remove = 'deleteObject()' %}
+
+
+
+{% extends "admin/admin_root.html" %}
+
+
+
+{% block content %}
+
+<div ng-controller="questionController"
+     class="container"
+     style="max-width: 900px; margin-bottom: 200px;">
+
+<div class="starter-template">
+  <h1>{{ title }}</h1>
+  <h2 ng-if="object.url" style="margin-top: 0;">(<a target="_blank" href="{{ '{{ object.url }}' }}">{{ '{{ object.url }}' }}</a>)</h2>
+</div>
+
+<form novalidate>
+
+  <div class="form-group">
+    <label class="control-label" for="question-heading-input">Название</label>
+    <input type="text"
+           ng-model="object.heading"
+           class="form-control input-lg"
+           id="question-heading-input"
+           placeholder=""
+           aria-describedby="question-heading-help-block"
+           required>
+    <span id="question-heading-help-block" class="help-block">
+
+    </span>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="question-category-select">Категория</label>
+    <select class="form-control"
+            ng-model="object.parent_id"
+            ng-options="category.id as category.name for category in categories"
+            id="question-category-select">
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="question-author-input">Автор</label>
+    <input type="text"
+           ng-model="object.author"
+           class="form-control"
+           id="question-author-input"
+           placeholder=""
+           aria-describedby="question-author-help-block"
+           required>
+    <span id="question-author-help-block" class="help-block">
+
+    </span>
+  </div>
+
+
+  <div class="form-group">
+    <label class="control-label" for="question-jurist-select">Ответивший юрист</label>
+    <select class="form-control"
+            ng-model="object.jurist_id"
+            ng-options="jurist.id as jurist.name for jurist in jurists"
+            id="question-jurist-select">
+    </select>
+  </div>
+
+
+
+  <div class="form-group">
+    <label class="control-label" for="tags-choice">Теги</label>
+    <tags-input ng-model="object.tags"
+                id="tags-choice"
+                class="custom-tags"
+                placeholder="Добавить тег..."
+                replace-spaces-with-dashes="false"
+                add-on-comma="false">
+      <auto-complete source="loadTags($query)"></auto-complete>
+    </tags-input>
+  </div>
+
+
+
+  <div class="form-group">
+    <label class="control-label" for="question-content-question">Вопрос</label>
+    <summernote id="question-content-question"
+                ng-model="object.content_question"
+                config="summertimeOptions"></summernote>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label" for="question-content-answer">Ответ</label>
+    <summernote id="question-content-answer"
+                ng-model="object.content_answer"
+                config="summertimeOptions"></summernote>
+  </div>
+
+
+
+
+  <div class="form-group">
+    <button type="button"
+            ng-click="{{ ng_click }}"
+            value=""
+            class="btn btn-lg btn-success">{{ green_button_name }}</button>
+
+    {% if action == 'modify' %}
+    <button type="button"
+            ng-click="{{ ng_click_remove }}"
+            value=""
+            class="btn btn-lg btn-danger">{{ red_button_name }}</button>
+    {% endif %}
+  </div>
+
+</form>
+
+{# <pre>object = {{ '{{ object | json }}' }}</pre> #}
+
+</div>
+
+{% endblock %}
+

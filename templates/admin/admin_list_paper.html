@@ -1,0 +1,49 @@
+{% set active_page = 'paper' %}
+{% set title = 'Статьи' %}
+
+{% extends "admin/admin_root.html" %}
+
+{% block content %}
+
+<div class="container-fluid" >
+{# style="max-width: 1200px; margin-bottom: 200px; #}
+
+<div class="starter-template">
+  <h1>{{ title }} (<a href="{{ url_for('admin_paper_add') }}">добавить</a>)</h1>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Заголовок</th>
+      <th>Ссылка</th>
+      <th>Категория</th>
+      <th>Контент</th>
+      <th>Дата изменения</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for page in pages %}
+    <tr>
+      <td><a href="{{ url_for('admin_paper_edit', id=page.id) }}">{{ page.heading }}</a></td>
+      <td><a href="{{ page.get_url() }}" target="_blank">{{ page.get_url() }}</a></td>
+      <td>{{ page.parent.as_category().nested_name }}</td>
+      <td>
+        {% if not page.is_content_empty() %}
+          <span style="color: green;" class="glyphicon glyphicon-ok" aria-hidden=true></span>
+          <span class=glyphicon-class></span>
+        {% else %}
+          <span style="color: red" class="glyphicon glyphicon-remove" aria-hidden=true></span>
+          <span class=glyphicon-class></span>
+        {% endif %}
+      </td>
+      <td>{{ page.date_modified.format('DD.MM.YYYY HH:mm', locale='ru_ru') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+</div>
+
+{% endblock %}

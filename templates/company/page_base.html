@@ -1,0 +1,70 @@
+{% extends "company/page_base_base.html" %}
+
+{% block content_base %}
+
+  <div class="main">
+    <main class="content">
+      {% set breadcrumbs = page.generate_breadcrumbs() %}
+      {% if breadcrumbs %}
+      <nav class="breadcrumbs">
+        <ul class="breadcrumbs__container" itemscope itemtype="http://schema.org/BreadcrumbList">
+
+        {% for breadcrumb in breadcrumbs %}
+            {% if not loop.last %}
+                <li class="breadcrumbs__link" itemscope itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+                    <a href="{{ breadcrumb.url }}" itemprop="item">
+                      <span itemprop="name">{{ breadcrumb.name }}</span>
+                      <meta itemprop="position" content="{{ loop.index }}">
+                    </a>
+                </li>
+            {% else %}
+                <li class="breadcrumbs__link-active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <span itemprop="item">{{ breadcrumb.name }}</span>
+                    <meta itemprop="position" content="{{ loop.index }}">
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        </ul>
+      </nav>
+      {% endif %}
+
+      {% block content %}  {% endblock %}
+    </main>
+
+    <aside class="sidebar">
+      <div class="on-duty">
+        <div class="on-duty__container">
+          <p class="on-duty__name">Консультация с юристом<br><span>по телефону</span></p>
+          <!--<p class="on-duty__position"></p>-->
+          <button class="on-duty__call-btn"
+                  id="ask_question"
+                  onclick="window.location='/answer/'">
+            Задать вопрос
+          </button>
+        </div>
+      </div>
+
+      <div class="to-know">
+        <p class="to-know__title">Полезно знать:</p>
+
+        <nav class="to-know__menu">
+          <ul class="to-know__container">
+            {% for label, name in [('why-free',        'Почему консультация бесплатная?'),
+                                   ('guarantees',      'Наши гарантии'),
+                                   ('question-answer', 'Вопрос-ответ')] %}
+            <li class="to-know__link">
+              {% if label == page.label %}
+              <span>{{ name }}</span>
+              {% else %}
+              <a href="{{ url_for('render_category', category=label) }}">{{ name }}</a>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </div>
+    </aside>
+  </div>
+
+{% endblock %}

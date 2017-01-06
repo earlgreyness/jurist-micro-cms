@@ -1,0 +1,64 @@
+{% extends "company/page_base.html" %}
+
+{% block content %}
+
+  <article class="article">
+    <h1>Ответы на ваши вопросы</h1>
+    <p>Вы можете задать вопрос опытном адвокату, <a href="{{ url_for('render_category', category='answer') }}">заполнив форму</a> или позвонив нам по телефону <b>{{ g.shortcodes.get('phone') | safe }}</b>.</p>
+
+    <div class="reviews">
+      {% set questions = pagination.items if pagination else [] %}
+
+      {% for question in questions %}
+      <div class="reviews__item">
+        <a class="reviews__item-link" href="{{ url_for('render_single_question', id=question.id) }}">{{ question.heading }}</a>
+        <p class="reviews__item-text">{{ question.content_question | truncate(230, False, '...') | safe }}</p>
+        <div class="reviews__item-meta">
+          <p class="reviews__item-commenter">Вопрос №{{ '{:06d}'.format(question.id) }}, {{ question.date_created.format('DD MMMM YYYY', locale='ru_ru') }}, {{ question.author }}</p>
+          <p class="reviews__item-category">Категория: {{ question.page.heading }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if pagination and pagination.pages > 1%}
+    <div class="pagination">
+      <div class="pagination__arrows">
+        <p class="pagination__text">Страницы</p>
+        {% if pagination.has_prev %}
+          {% set the_number = pagination.prev_num if pagination.prev_num != 1 else None %}
+        <a class="pagination__prev" href="{{ url_for('render_category', category='question-answer', page=the_number) }}">&#8592; предыдущая</a>
+        {% else %}
+        <a class="pagination__prev pagination__arrows--off">&#8592; предыдущая</a>
+        {% endif %}
+        {% if pagination.has_next %}
+        <a class="pagination__next" href="{{ url_for('render_category', category='question-answer', page=pagination.next_num) }}">следующая &#8594;</a>
+        {% else %}
+        <a class="pagination__next pagination__arrows--off">следующая &#8594;</a>
+        {% endif %}
+      </div>
+
+      <div class="pagination__numbers">
+        {%- for number in pagination.iter_pages(left_edge=2,
+                                                left_current=2,
+                                                right_current=5,
+                                                right_edge=2) %}
+          {% if number %}
+            {% if number != pagination.page %}
+              {% set the_number = number if number != 1 else None %}
+              <a class="pagination__number"
+                 href="{{ url_for('render_category', category='question-answer', page=the_number) }}">{{ number }}</a>
+            {% else %}
+              <a class="pagination__number pagination__number--active">{{ number }}</a>
+            {% endif %}
+          {% else %}
+            <a class="pagination__number">...</a>
+          {% endif %}
+        {%- endfor %}
+      </div>
+
+    </div>
+    {% endif %}
+  </article>
+
+{% endblock %}

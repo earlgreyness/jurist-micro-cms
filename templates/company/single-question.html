@@ -1,0 +1,34 @@
+{% extends "company/page_base.html" %}
+
+{% block content %}
+
+  <article class="article">
+    <h1>{{ question.heading }}</h1>
+
+    {{ question.content_question | replace_shortcodes | safe }}
+
+    <div class="review__meta">
+      <p class="review__commenter">Вопрос №{{ '{:06d}'.format(question.id) }}, {{ question.date_created.format('DD MMMM YYYY', locale='ru_ru') }}, {{ question.author }}</p>
+      <p class="review__category">Категория: {{ question.page.heading }}</p>
+    </div>
+
+    <p class="answer__title">Ответ:</p>
+
+    <div class="answer">
+      <div class="answer__meta">
+        <img class="answer__avatar"
+             src="{{ url_for('static', filename='company/img/jurists/{}'.format(question.jurist.face)) }}"
+             alt="{{ question.jurist.name }}">
+        <div>
+          <p class="answer__name">{{ question.jurist.name }}</p>
+          <p class="answer__position">{{ question.jurist.job_title }}</p>
+        </div>
+      </div>
+
+      {{ question.content_answer | replace_shortcodes | safe }}
+
+    </div>
+
+  </article>
+
+{% endblock %}

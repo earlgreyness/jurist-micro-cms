@@ -1,0 +1,42 @@
+{% extends "company/page_base.html" %}
+
+{% block content %}
+
+  <article class="article">
+
+    {{ page.content | replace_shortcodes | safe }}
+
+    <form id="form-lead" class="jurist" action="/sender" name="jurist" method="post">
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="category">Категория права</label>
+        <select class="jurist__select" name="category" id="category" tabindex="10">
+          {% for category in custom_categories %}
+            <option value="{{ category }}">{{ category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="yourname">Ваше имя*</label>
+        <input class="jurist__name" type="text" id="yourname" name="name" tabindex="11">
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="yourphone">Телефон*</label>
+        <input class="jurist__phone" type="text" id="yourphone" name="phone" tabindex="12">
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="question">Вопрос</label>
+        <textarea class="jurist__question" name="question" id="question" placeholder="Кратко опишите проблему, укажите желаемую дату и время посещения офиса" tabindex="13"></textarea>
+      </div>
+
+      <div class="jurist__footer">
+        <button class="ask__submit-btn" type="submit" tabindex="14">Записаться на прием</button>
+        <p class="jurist__tip">Перезвоним в течение {{ g.shortcodes.get('call-back-minutes', 10) }} минут</p>
+      </div>
+    </form>
+  </article>
+
+{% endblock %}

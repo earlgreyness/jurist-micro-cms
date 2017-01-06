@@ -1,0 +1,8 @@
+flask_login == 0.3.2
+sqlalchemy >= 1.1.3
+beautifulsoup4 == 4.3.2
+requests >= 2.5.1
+flask_sqlalchemy >= 2.1
+jinja2 >= 2.8
+werkzeug >= 0.11.11
+flask >= 0.11.1

@@ -1,0 +1,35 @@
+{% set active_page = 'shortcode' %}
+{% set title = 'Шорткоды' %}
+
+{% extends "admin/admin_root.html" %}
+
+{% block content %}
+
+<div class="container" style="max-width: 1200px; margin-bottom: 200px;">
+
+<div class="starter-template">
+  <h1>{{ title }} (<a href="{{ url_for('admin_shortcode_add') }}">добавить</a>)</h1>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Шорткод</th>
+      <th>Значение</th>
+      <th>Комментарий</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for shortcode in shortcodes %}
+    <tr>
+      <td><a href="{{ url_for('admin_shortcode_edit', id=shortcode.id) }}">{{ shortcode.key }}</a></td>
+      <td>{{ shortcode.value | truncate(50, True) }}</td>
+      <td>{{ shortcode.comment }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}

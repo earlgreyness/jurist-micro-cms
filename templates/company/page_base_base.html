@@ -1,0 +1,328 @@
+{% set breadcrumbs = breadcrumbs | default([]) %}
+{% set categories = categories | default([]) %}
+{% set aux_fields = aux_fields | default({}) %}
+{% set questions = questions | default([]) %}
+{% set pagination = pagination | default(None) %}
+{% set custom_categories = [
+    'Общие юридические вопросы',
+    'Арбитражные споры',
+    'Семейное право',
+    'Жилищное право',
+    'Трудовое право',
+    'Страховые споры',
+    'Защита прав потребителей',
+    'Наследственные дела',
+    'Земельное право',
+    'Досудебные споры',
+    'Споры в суде',
+    'Уголовные дела',
+    'Административные дела',
+    'Налоговые споры',
+    'Медицинские споры',
+] %}
+
+{% set topic_in_form = page.kind in [
+    'category', 'service', 'subcategory'] %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <title>{{ page.title if page.title else page.heading }}</title>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="{{ page.description if page.description }}">
+  <link rel="shortcut icon" href="{{ url_for('render_favicon') }}" type="image/x-icon">
+  <meta name="yandex-verification" content="6516612764ef5926" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='company/img/touch-icon-ipad-retina.png') }}">
+
+
+
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='company/css/styles.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700%7CPT+Serif:400,400i,700&subset=cyrillic">
+  <link rel="stylesheet" href="{{ url_for('static', filename='company/css/vendor/lightbox.min.css') }}">
+
+  <!--[if lt IE 9]>
+  <script src="js/vendor/html5shiv.min.js"></script>
+  <script src="js/vendor/respond.min.js"></script>
+  <![endif]-->
+
+  <!--[if lt IE 10]>
+  <link rel="stylesheet" href="css/ie.css">
+  <script src="js/vendor/flexibility.min.js"></script>
+  <script src="js/vendor/placeholders.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <header class="header">
+    <div class="logo__container-top">
+      {% if page.is_main() %}
+      <span class="logo__link">
+        <img class="logo__img"
+             src="{{ url_for('static', filename='company/img/logo.png') }}"
+             alt="Юридическая компания" />
+      </span>
+      {% else %}
+      <a class="logo__link" href="{{ url_for('render_index') }}">
+        <img class="logo__img"
+             src="{{ url_for('static', filename='company/img/logo.png') }}"
+             alt="Юридическая компания" />
+      </a>
+      {% endif %}
+
+      {% set delta = g.now.year - 2007 %}
+      <p class="logo__text">{{ delta }} лет на рынке <br>юридических услуг</p>
+      <div class="hamburger" id="hamburger"></div>
+    </div>
+
+    <div class="contacts__container">
+      <p class="contacts__number">{{ g.shortcodes.get('phone') | safe }}</p>
+      <p class="contacts__text-top">Бесплатная горячая линия, круглосуточно</p>
+      <button class="contacts__call-btn" id="recall_top">Обратный звонок</button>
+    </div>
+  </header>
+
+  <nav class="top-menu">
+    <ul class="top-menu__container">
+
+    {% for item in [('about',    'О компании'),
+                    ('visit',    'Записаться в офис'),
+                    ('document', 'Заказать документ'),
+                    ('price',    'Цены на услуги'),
+                    ('reports',  'Отзывы'),
+                    ('contacts', 'Контакты')] %}
+      {% if item[0] == page.label %}
+      <li class="top-menu__active">
+        <span>{{ item[1] }}</span>
+      </li>
+      {% else %}
+      <li class="top-menu__link">
+        <a href="{{ url_for('render_category', category=item[0]) }}">{{ item[1] }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
+
+    </ul>
+  </nav>
+
+
+  {% if page.kind != 'static' %}
+
+    {% set aux_fields = page.generate_aux_fields() %}
+
+    <div class="consult">
+      <div class="consult__services">
+
+        {% set tag = 'h1' if page.is_main() else 'p' %}
+
+        <{{ tag }} class="services__title">
+          {% set _field_2 = aux_fields.get('aux_field_2') %}
+          {% set _value_2 = _field_2 if _field_2 else 'Бесплатная консультация юриста по&nbsp;телефону' %}
+          {{ _value_2 | safe }}
+        </{{ tag }}>
+
+        <div class="services__container">
+          <p class="services__subtitle">
+          {% set _field_3 = aux_fields.get('aux_field_3') %}
+          {% set _value_3 = _field_3 if _field_3 else 'Услуги для жителей Москвы и МО' %}
+          {{ _value_3 | safe }}
+          </p>
+
+          {% if menu %}
+          <nav class="services__menu">
+
+          {% for column_class, column in [('services-menu__row-one', menu[:6]),
+                                          ('services-menu__row-two', menu[6:])] %}
+
+            <ul class="{{ column_class }}">
+            {% for item in column %}
+              {% if not item.url %}
+                {% set li_class_name = 'services__link-active' %}
+              {% elif item.important %}
+                {% set li_class_name = 'services__link-important' %}
+              {% else %}
+                {% set li_class_name = 'services__link' %}
+              {% endif %}
+              <li class="{{ li_class_name }}">
+              {% if not item.url %}
+                {% set aux = 'style="color: black;"' if item.name == page.heading %}
+                <span {{ aux | safe }}>{{ item.name }}</span>
+              {% else %}
+                <a href="{{ item.url }}">{{ item.name }}</a>
+              {% endif %}
+              </li>
+            {% endfor %}
+            </ul>
+
+          {% endfor %}
+
+          </nav>
+          {% endif %}
+
+          <div class="services__switch" id="services__switch">
+            <span id="services__switch-text">Открыть все услуги</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="consult__ask">
+        <p class="ask__title">
+          {% set _field_1 = aux_fields.get('aux_field_1') %}
+          {% set _value_1 = _field_1 if _field_1 else 'Задайте вопрос юристу' %}
+          {{ _value_1 | safe }}
+        </p>
+        <p class="ask__text">получите ответ через {{ g.shortcodes.get('call-back-minutes', 10) }} мин.</p>
+
+        <form id="form-blue" class="ask__form" action="/sender" name="ask" method="post">
+
+          <input type="hidden" value="form-blue" name="page-source" />
+
+          {% if topic_in_form %}
+          <input type="hidden" name="topic" value="{{ page.heading }}" />
+          {% endif %}
+
+          <label for="your_name">
+            <input class="ask__input"
+                   id="your_name"
+                   name="name"
+                   type="text"
+                   placeholder="Ваше имя*"
+                   tabindex="1">
+          </label>
+          <label for="tel">
+            <input class="ask__input"
+                   id="tel"
+                   name="phone"
+                   type="text"
+                   placeholder="Контактный телефон*"
+                   tabindex="2">
+          </label>
+          <textarea class="ask__desc"
+                    name="question"
+                    id="text"
+                    placeholder="Кратко опишите проблему"
+                    tabindex="3"></textarea>
+          <button class="ask__submit-btn" type="submit" tabindex="4">
+            Получить консультацию
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+  {% endif %}
+
+
+  {% block content_base %} {% endblock %}
+
+
+  <footer class="footer">
+    <div class="logo__container">
+      {% if page.is_main() %}
+      <span class="logo__link">
+        <img class="logo__img"
+             src="{{ url_for('static', filename='company/img/logo.png') }}"
+             alt="Юридическая компания" />
+      </span>
+      {% else %}
+      <a class="logo__link" href="{{ url_for('render_index') }}">
+        <img class="logo__img"
+             src="{{ url_for('static', filename='company/img/logo.png') }}"
+             alt="Юридическая компания" />
+      </a>
+      {% endif %}
+    </div>
+
+    <nav class="footer-menu">
+      <ul class="footer-menu__container">
+        {% for label, name in [('lawyer',            'Услуги адвоката'),
+                               ('vacancy',           'Вакансии'),
+                               ('paid-legal-advice', 'Платная консультация'),
+                               ('policies',          'Политика конфиденциальности')] %}
+        <li class="footer-menu__link">
+          {% if label == page.label %}
+          <span>{{ name }}</span>
+          {% else %}
+          <a href="{{ url_for('render_category', category=label) }}">{{ name }}</a>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <div class="footer-contacts__container">
+      <p class="contacts__number">{{ g.shortcodes.get('phone') | safe }}</p>
+      <p class="contacts__text">Бесплатная горячая линия, круглосуточно</p>
+      <button class="contacts__call-btn" id="recall_bottom">Обратный звонок</button>
+    </div>
+  </footer>
+
+  <div class="copyright">
+    <p class="copyright__date">&copy; {{ g.shortcodes.get('domain') }}, 2013–{{ g.now.year }}</p>
+    <p class="copyright__text">Все авторские права на тексты, дизайн сайта и прочие материалы являются собственностью
+      {{ g.shortcodes.get('domain') }}. Использование контента без письменного разрешения правообладателя строго запрещено. Мы обеспечим
+      соблюдение своих прав интеллектуальной собственности, включая уголовное преследование.</p>
+  </div>
+
+  <div id="recall" class="recall">
+    <a id="recall_close" class="recall__close-btn"></a>
+    <p class="recall__title">Закажите звонок юриста</p>
+    <p class="recall__text">перезвоним в течение {{ g.shortcodes.get('call-back-minutes', 10) }} мин.</p>
+
+    <form id="form-popup" class="recall__form" action="/sender" name="recall" method="post">
+      <input type="hidden" name="purpose" value="callback">
+
+      {% if topic_in_form %}
+      <input type="hidden" name="topic" value="{{ page.heading }}" />
+      {% endif %}
+
+      <label for="name">
+        <input class="recall__input" id="name" name="name" type="text" placeholder="Ваше имя*" tabindex="10">
+      </label>
+      <label for="phone">
+        <input class="recall__input" id="phone" name="phone" type="text" placeholder="Контактный телефон*"
+            tabindex="11">
+      </label>
+      <button class="recall__submit-btn" type="submit" tabindex="12">Перезвоните мне</button>
+    </form>
+  </div>
+  <div class="recall__bg" id="recall_bg"></div>
+
+  <div class="mob-menu" id="mob-menu">
+    <a class="mob-menu__close-btn" id="mob_close"></a>
+
+    <nav class="mob-menu__container">
+      <a class="mob-menu__link mob-menu--ask" href="{{ url_for('render_category', category='answer') }}">Задать вопрос</a>
+      <a class="mob-menu__link mob-menu--doc" href="{{ url_for('render_category', category='document') }}">Заказать документ</a>
+      <a class="mob-menu__link mob-menu--phone" href="{{ url_for('render_category', category='visit') }}">Записаться в офис</a>
+      <a class="mob-menu__link" href="{{ url_for('render_index') }}">Главная</a>
+      <a class="mob-menu__link" href="{{ url_for('render_category', category='about') }}">О компании</a>
+      <a class="mob-menu__link" href="{{ url_for('render_category', category='price') }}">Цены на услуги</a>
+      <a class="mob-menu__link" href="{{ url_for('render_category', category='reports') }}">Отзывы</a>
+      <a class="mob-menu__link" href="{{ url_for('render_category', category='question-answer') }}">Вопрос-ответ</a>
+      <a class="mob-menu__link" href="{{ url_for('render_category', category='contacts') }}">Контакты</a>
+    </nav>
+  </div>
+  <div class="mob-menu__bg" id="mob-menu_bg"></div>
+
+  <script src="{{ url_for('static', filename='company/js/vendor/jquery-1.12.4.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='company/js/vendor/jquery.lightbox.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='company/js/vendor/jquery.inputmask.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='company/js/custom.js') }}"></script>
+
+  <!-- Yandex.Metrika counter --> <script type="text/javascript"> (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter27768897 = new Ya.Metrika({ id:27768897, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/27768897" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+
+  <!-- Roistat script --> <script>
+    (function(w, d, s, h, id) {
+        w.roistatProjectId = id; w.roistatHost = h;
+        var p = d.location.protocol == "https:" ? "https://" : "http://";
+        var u = /^.*roistat_visit=[^;]+(.*)?$/.test(d.cookie) ? "/dist/module.js" : "/api/site/1.0/"+id+"/init";
+        var js = d.createElement(s); js.async = 1; js.src = p+h+u; var js2 = d.getElementsByTagName(s)[0]; js2.parentNode.insertBefore(js, js2);
+    })(window, document, 'script', 'cloud.roistat.com', '32a6bf8dacdef554928078f13bb44582');
+  </script> <!-- /Roistat script -->
+
+</body>
+</html>

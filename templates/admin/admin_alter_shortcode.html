@@ -1,0 +1,99 @@
+
+{% set red_button_name = 'Удалить' %}
+
+{% if action == 'create' %}
+    {% set green_button_name = 'Создать' %}
+    {% set word = 'Добавление нового Шорткода' %}
+    {% set word_3 = '' %}
+    {% set ng_click = 'createObject()' %}
+{% else %}
+    {% set green_button_name = 'Обновить' %}
+    {% set word = 'Редактирование Шорткода' %}
+    {% set word_3 = ' ' + (object_id | string) %}
+    {% set ng_click = 'updateObject()' %}
+{% endif %}
+
+{% set active_page = 'shortcode' %}
+{% set ng_click_remove = 'deleteObject()' %}
+
+{% set title = word + word_3 %}
+
+
+
+{% extends "admin/admin_root.html" %}
+
+
+
+{% block content %}
+
+<div ng-controller="shortcodeController"
+     class="container"
+     style="max-width: 900px; margin-bottom: 200px;">
+
+<div class="starter-template">
+  <h1>{{ title }}</h1>
+</div>
+
+<form novalidate>
+
+  <div class="form-group">
+    <label class="control-label" for="shortcode-heading-input">Название</label>
+    <input type="text"
+           ng-model="object.key"
+           class="form-control input-lg"
+           id="shortcode-heading-input"
+           placeholder=""
+           aria-describedby="shortcode-heading-help-block"
+           required>
+    <span id="shortcode-heading-help-block" class="help-block">
+
+    </span>
+  </div>
+
+
+  <div class="form-group">
+    <label class="control-label" for="shortcode-value">Значение</label>
+    <summernote id="shortcode-value"
+                ng-model="object.value"
+                config="summertimeOptions"></summernote>
+  </div>
+
+
+  <div class="form-group">
+    <label class="control-label" for="shortcode-comment-input">Комментарий</label>
+    <input type="text"
+           ng-model="object.comment"
+           class="form-control"
+           id="shortcode-comment-input"
+           placeholder=""
+           aria-describedby="shortcode-comment-help-block"
+           required>
+    <span id="shortcode-comment-help-block" class="help-block">
+
+    </span>
+  </div>
+
+
+
+  <div class="form-group">
+    <button type="button"
+            ng-click="{{ ng_click }}"
+            value=""
+            class="btn btn-lg btn-success">{{ green_button_name }}</button>
+
+    {% if action == 'modify' %}
+    <button type="button"
+            ng-click="{{ ng_click_remove }}"
+            value=""
+            class="btn btn-lg btn-danger">{{ red_button_name }}</button>
+    {% endif %}
+  </div>
+
+</form>
+
+{# <pre>shortcode = {{ '{{ object | json }}' }}</pre> #}
+
+</div>
+
+{% endblock %}
+

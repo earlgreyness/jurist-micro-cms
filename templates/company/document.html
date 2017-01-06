@@ -1,0 +1,92 @@
+{% extends "company/page_base.html" %}
+
+{% block content %}
+
+  <article class="article">
+    <h1>Какой документ вам нужен?</h1>
+
+    <p>Вам нужно составить иск или претензию? Подготовить договор? Опишите документ, который вам нужен,
+и отправьте заявку. Помните, правильно составленный документ — огромный шаг на пути к удачному завершению процесса.</p>
+
+
+    <form id="form-lead" class="jurist" action="/sender" name="document" method="post">
+      <div class="radio__container">
+
+        <div class="radio__group">
+          <input type="radio" id="court" name="doctype" value="Документы в суд" checked>
+          <label class="radio__label" id="court_label" for="court" tabindex="1">Документы в суд</label>
+          <p class="radio__text" id="radio_text3">Исковое заявление, отзыв на исковое заявление, ходатайство,
+            жалоба на решение суда и др.</p>
+        </div>
+
+        <div class="radio__group">
+          <input type="radio" id="business" name="doctype" value="Регистрация бизнеса">
+          <label class="radio__label" id="business_label" for="business" tabindex="2">Регистрация бизнеса</label>
+          <p class="radio__text" id="radio_text1">Комплекты документов для регистрации ООО, ИП, ТСЖ и др.</p>
+        </div>
+
+        <div class="radio__group">
+          <input type="radio" id="claim" name="doctype" value="Претензии потребителей">
+          <label class="radio__label" id="claim_label" for="claim" tabindex="3">Претензии потребителей</label>
+          <p class="radio__text" id="radio_text4">Претензии на возврат денег за товар. Претензии в страховую, в
+            банк, к ЖКХ и др.</p>
+        </div>
+
+        <div class="radio__group">
+          <input type="radio" id="contract" name="doctype" value="Договоры и соглашения">
+          <label class="radio__label" id="contract_label" for="contract" tabindex="4">Договоры и соглашения</label>
+          <p class="radio__text" id="radio_text2">Договоры аренды, подряда, купли-продажи, займа, комиссии и др.</p>
+        </div>
+
+
+        <div class="radio__group">
+          <input type="radio" id="complaint" name="doctype" value="Жалоба на чиновника">
+          <label class="radio__label" id="complaint_label" for="complaint" tabindex="5">Жалоба на чиновника</label>
+          <p class="radio__text" id="radio_text5">Жалоба на действия должностного лица, судебного пристава,
+            сотрудника ГИБДД и др.</p>
+        </div>
+
+        <div class="radio__group">
+          <input type="radio" id="other" name="doctype" value="Другое">
+          <label class="radio__label" id="other_label" for="other" tabindex="6">Другое</label>
+          <p class="radio__text" id="radio_text6">Любой другой документ. Вы можете описать его самостоятельно.</p>
+        </div>
+
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="type">Тип документа</label>
+        <select class="jurist__select" name="doctype_detailed" id="type" tabindex="7">
+          <option value="Исковое заявление" selected>Исковое заявление</option>
+          <option value="Отзыв или возражение на исковое заявление">Отзыв или возражение на исковое заявление</option>
+          <option value="Ходатайство">Ходатайство</option>
+          <option value="Жалоба на решение суда">Жалоба на решение суда</option>
+          <option value="Жалоба на постановление по делу об административном правонарушении">Жалоба на постановление по делу об административном правонарушении</option>
+          <option value="Другое">Другое</option>
+        </select>
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="your_name">Ваше имя*</label>
+        <input class="jurist__name" type="text" id="your_name" name="name" tabindex="8">
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="tel">Телефон*</label>
+        <input class="jurist__phone" type="text" id="tel" name="phone" tabindex="9">
+      </div>
+
+      <div class="jurist__container">
+        <label class="jurist__label" for="question">Комментарий</label>
+        <textarea class="jurist__question" id="question" name="question" placeholder="Кратко опишите ситуацию и требования к документу"
+            tabindex="10"></textarea>
+      </div>
+
+      <div class="jurist__footer">
+        <button class="ask__submit-btn" type="submit" tabindex="11">Заказать документ</button>
+        <p class="jurist__tip">Рассчитаем стоимость и перезвоним<br>в течение {{ g.shortcodes.get('call-back-minutes', 10) }} минут</p>
+      </div>
+    </form>
+  </article>
+
+{% endblock %}

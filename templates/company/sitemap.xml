@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  {% for page in pages %}
+  {% if not page.should_be_404() %}
+  <url>
+    <loc>{{ page.get_url(_external=True) }}</loc>
+    <lastmod>{{ page.date_modified.format('YYYY-MM-DDTHH:mm:ssZZ') }}</lastmod>
+  </url>
+	{% endif %}
+  {% endfor %}
+
+  {% for question in questions %}
+  <url>
+    <loc>{{ question.get_url(_external=True) }}</loc>
+    <lastmod>{{ question.date_modified.format('YYYY-MM-DDTHH:mm:ssZZ') }}</lastmod>
+  </url>
+  {% endfor %}
+
+</urlset>

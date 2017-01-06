@@ -1,0 +1,31 @@
+{% extends "company/page_base_base.html" %}
+
+{% block content_base %}
+
+<div class="thanks">
+  <div class="thanks__container">
+    <h1 class="thanks__title">Спасибо за обращение!</h1>
+
+    <p class="thanks__text">Специалист перезвонит в течение <strong>{{ g.shortcodes.get('call-back-minutes', 10) }}&nbsp;минут</strong>.<br>
+      Мы работаем без выходных,<br>консультации по телефону с&nbsp;{{ g.shortcodes.get('work-start', '09:00') }}&nbsp;до&nbsp;{{ g.shortcodes.get('work-finish', '21:00') }}.</p>
+
+    <p class="thanks__waiting">А пока ожидаете звонка, можете почитать полезные статьи:</p>
+
+    <nav class="thanks__menu">
+      <a class="thanks__menu-link" href="{{ url_for('render_category', category='why-free') }}">Почему мы консультируем бесплатно?</a>
+      <a class="thanks__menu-link" href="{{ url_for('render_category', category='nedobrosovestnye-juristy') }}">Как не стать жертвой юристов-мошенников</a>
+      <a class="thanks__menu-link" href="{{ url_for('render_category', category='kak-vesti-sebja-v-sude') }}">Как правильно вести себя в суде</a>
+    </nav>
+
+    <p class="thanks__social-text">Следите за нами в социальных сетях</p>
+
+    <div class="thanks__social">
+      <a href="#" class="thanks__social-vk"></a>
+      <a href="#" class="thanks__social-fb"></a>
+      <a href="#" class="thanks__social-tw"></a>
+      <a href="#" class="thanks__social-goog"></a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

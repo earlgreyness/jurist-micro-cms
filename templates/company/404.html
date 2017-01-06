@@ -1,0 +1,24 @@
+{% extends "company/page_base_base.html" %}
+
+{% block content_base %}
+
+<div class="thanks">
+  <div class="thanks__container">
+    <h1>Страница не найдена. <br>Ошибка 404</h1>
+
+    <p class="thanks__text">Неправильно набран адрес, или такой страницы на сайте больше не существует.</p>
+    <nav class="thanks__menu">
+      <a class="thanks__menu-link" href="{{ url_for('render_index') }}">Главная</a>
+      {% for label, name in [('answer',   'Задать вопрос юристу'),
+                             ('visit',    'Записаться на приём'),
+                             ('document', 'Заказать документ'),
+                             ('reports',  'Отзывы'),
+                             ('contacts', 'Контакты')] %}
+      <a class="thanks__menu-link" href="{{ url_for('render_category', category=label) }}">{{ name }}</a>
+      {% endfor %}
+    </nav>
+
+  </div>
+</div>
+
+{% endblock %}
