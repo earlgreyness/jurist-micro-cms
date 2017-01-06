@@ -98,3 +98,4 @@ tests.py
 *.conf
 *.wsgi
 crontab
+static/
