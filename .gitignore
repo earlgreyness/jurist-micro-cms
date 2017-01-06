@@ -92,10 +92,5 @@ ENV/
 *.sql
 *.log
 config.py
-logs/
 .DS_Store
 tests.py
-*.conf
-*.wsgi
-crontab
-static/

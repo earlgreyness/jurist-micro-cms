@@ -1,0 +1,19 @@
+DEBUG = False
+SECRET_KEY = 'secret-key'
+LOGGER_HANDLER_POLICY = 'debug'
+SQLALCHEMY_DATABASE_URI = 'postgresql://user:password@localhost/database'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_ECHO = False
+CALLCENTER_URL = 'http://example.com'
+CRM_URL = 'http://example.com'
+DEFAULT_ADMIN_PASSWORD = 'default-admin-password'
+DOMAIN_NAME = 'jurist-rus.ru'
+ROISTAT_KEY = 'roistat-key'
+ROISTAT_URL = 'http://example.com'
+
+DB_BACKUP_SMTP_HOST = 'smtp.yandex.ru'
+DB_BACKUP_SMTP_PORT = 465
+DB_BACKUP_LOGIN = 'login'
+DB_BACKUP_PASSWORD = 'password'
+DB_BACKUP_SEND_FROM = 'from@example.com'
+DB_BACKUP_SEND_TO = 'to@example.com'
