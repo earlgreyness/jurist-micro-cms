@@ -89,12 +89,12 @@ ENV/
 .ropeproject
 
 # Project specific items
-.sql
-.log
+*.sql
+*.log
 config.py
 logs/
-.wsgi
-.conf
-crontab
 .DS_Store
 tests.py
+*.conf
+*.wsgi
+crontab
